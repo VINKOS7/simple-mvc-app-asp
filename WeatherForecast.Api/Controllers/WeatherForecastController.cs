@@ -17,7 +17,7 @@ public class WeatherForecastController : Controller
     
 
     [AllowAnonymous, HttpGet("fetch")]
-    public async Task<FetchWeatherForecastsResponse> Fetch([FromQuery] int offset = 0, [FromQuery] int size = 20) => await _mediator.Send(new FetchBooksRequest(offset, size));
+    public async Task<FetchWeatherForecastsResponse> Fetch([FromQuery] int offset = 0, [FromQuery] int size = 20) => await _mediator.Send(new FetchWeatherForecastsRequest(offset, size));
 
 
     [Authorize, HttpPost("add")]

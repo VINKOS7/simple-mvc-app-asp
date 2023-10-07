@@ -14,7 +14,7 @@ public static class EntityFrameworkCoreExtensions
             options => options
                 .UseNpgsql(
                     configuration.GetConnectionString("Context"),
-                    b => b.MigrationsAssembly("Library.Api")
+                    b => b.MigrationsAssembly("WeatherForecast.Api")
                 )
                 .EnableSensitiveDataLogging()
         );

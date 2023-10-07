@@ -22,7 +22,7 @@ public class ForecastWeatherRepo : IForecastWeatherRepo
     public async Task<ICollection<ForecastWeather>> FetchAsync(int offset, int size) => await _db.ForecastsWeather
         .Skip(offset)
         .Take(size)
-        .OrderBy(b => b)
+        .OrderBy(b => b.CreatedAt)
         .ToListAsync();
      
 
@@ -31,6 +31,7 @@ public class ForecastWeatherRepo : IForecastWeatherRepo
 
     public async Task RemoveByIdAsync(Guid Id)
     {
+
         var book =  await _db.ForecastsWeather.FirstOrDefaultAsync(b => b.Id == Id);
 
         if (book is not null) _db.ForecastsWeather.Remove(book);
