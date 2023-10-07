@@ -20,13 +20,13 @@ public class ActivateNewPasswordRequestHandler : IRequestHandler<ActivateNewPass
     private readonly JWTOptions _jwtOptions;
     private readonly IAccountRepo _accountRepo;
     private readonly IHttpContextAccessor _httpContextAccessor;
-    private readonly ILogger<AccountController> _logger;
+    private readonly ILogger<ActivateNewPasswordRequestHandler> _logger;
 
     public ActivateNewPasswordRequestHandler(
         IAccountRepo accountRepo,
         IHttpContextAccessor httpContextAccessor,
         IOptions<JWTOptions> jwtOptions,
-        ILogger<AccountController> logger)
+        ILogger<ActivateNewPasswordRequestHandler> logger)
     {
         _accountRepo = accountRepo;
         _httpContextAccessor = httpContextAccessor;

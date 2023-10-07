@@ -7,7 +7,7 @@ namespace WeatherForecast.Api.Extensions;
 public static class InfrastructureExtensions
 {
     public static IServiceCollection ConfigureInfrastructureServices(this IServiceCollection services) => services
-        .AddScoped<IForecastWeatherRepo, BookRepo>()
+        .AddScoped<IForecastWeatherRepo, ForecastWeatherRepo>()
         .AddScoped<IAccountRepo, AccountRepo>();
     
 }

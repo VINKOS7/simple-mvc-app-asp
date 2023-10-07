@@ -20,13 +20,13 @@ public class ActivationRequestHandler : IRequestHandler<ActivationRequest, Activ
     private readonly JWTOptions _jwtOptions;
     private readonly IAccountRepo _accountRepo;
     private readonly IHttpContextAccessor _httpContextAccessor;
-    private readonly ILogger<AccountController> _logger;
+    private readonly ILogger<ActivationRequestHandler> _logger;
 
     public ActivationRequestHandler(
         IAccountRepo accountRepo,
         IHttpContextAccessor httpContextAccessor,
         IOptions<JWTOptions> jwtOptions,
-        ILogger<AccountController> logger)
+        ILogger<ActivationRequestHandler> logger)
     {
         _accountRepo = accountRepo;
         _httpContextAccessor = httpContextAccessor;

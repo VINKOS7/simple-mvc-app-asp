@@ -1,0 +1,23 @@
+﻿@page
+
+@model WeatherForecast.Api.Responses.FetchWeatherForecastsResponse
+
+@using WeatherForecast.Domain.Aggregates.WeatherForecast.Values.WindValue.Enums;
+
+@ViewData["Title"] = "Home Page";
+
+<div>
+    @foreach (var wf in Model.WeatherForecasts)
+    {
+        <h5>@wf.DateWeatherEvent</h5>
+        <h5>@wf.Temperature</h5>
+        <h5>@wf.HumidityInPercent</h5>
+        <h5>@wf.DewPoint</h5>
+        <h5>@wf.AtmospherePressure</h5>
+        <h5>@wf.Wind.DirectionFirst</h5>
+        <h5>@if (wf.Wind.DirectionSecond is not Direction.Calm) @wf.Wind.DirectionSecond</h5>
+        <h5>@wf.CloudBaseInMeters</h5>
+        <h5>@wf.CloudinessInPercent</h5>
+        <h5>@wf.HorizontalVisibilityInKilometer</h5>
+    }
+</div>

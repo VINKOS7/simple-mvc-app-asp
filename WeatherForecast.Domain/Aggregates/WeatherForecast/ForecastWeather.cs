@@ -28,6 +28,7 @@ public class ForecastWeather : Entity, IAggregateRoot
 
         return forecastWeather;
     }
+
     public DateTime DateWeatherEvent { get; private set; }
     public double Temperature { get; private set; }
     public double HumidityInPercent { get => HumidityInPercent; set => _ = value <= 100 ? value : 100; }

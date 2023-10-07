@@ -23,21 +23,41 @@ public class WeatherForecastResponse
         HorizontalVisibilityInKilometer = weatherForecast.HorizontalVisibilityInKilometer;
     }
 
-    [JsonProperty("id")] public Guid Id { get; private set; }
+    [JsonProperty("id")]
+    public Guid Id { get; private set; }
 
-    [JsonProperty("dateWeatherEvent")] public DateTime DateWeatherEvent { get; private set; }
-    [JsonProperty("temperature")] public double Temperature { get; private set; }
-    [JsonProperty("humidityInPercent")] public double HumidityInPercent { get; private set; }
-    [JsonProperty("dewPoint")] public double DewPoint { get; private set; }
-    [JsonProperty("atmospherePressure")] public int AtmospherePressure { get; private set; }
-    [JsonProperty("wind")] public WindReadModel Wind { get; private set; }
-    [JsonProperty("cloudinessInPercent")] public double CloudinessInPercent { get; private set; }
-    [JsonProperty("cloudBaseInMeters")] public int CloudBaseInMeters { get; private set; }
-    [JsonProperty("horizontalVisibilityInKilometer")] public int HorizontalVisibilityInKilometer { get; private set; }
-    [JsonProperty("weatherEvent")] public string WeatherEvent { get; private set; }
+    [JsonProperty("dateWeatherEvent")] 
+    public DateTime DateWeatherEvent { get; private set; }
+
+    [JsonProperty("temperature")] 
+    public double Temperature { get; private set; }
+
+    [JsonProperty("humidityInPercent")] 
+    public double HumidityInPercent { get; private set; }
+
+    [JsonProperty("dewPoint")] 
+    public double DewPoint { get; private set; }
+
+    [JsonProperty("atmospherePressure")] 
+    public int AtmospherePressure { get; private set; }
+
+    [JsonProperty("wind")] 
+    public WindReadModel Wind { get; private set; }
+
+    [JsonProperty("cloudinessInPercent")] 
+    public double CloudinessInPercent { get; private set; }
+
+    [JsonProperty("cloudBaseInMeters")] 
+    public int CloudBaseInMeters { get; private set; }
+
+    [JsonProperty("horizontalVisibilityInKilometer")] 
+    public int HorizontalVisibilityInKilometer { get; private set; }
+
+    [JsonProperty("weatherEvent")]
+    public string WeatherEvent { get; private set; }
 }
 
-public record FetchWeatherForecastsResponse([JsonProperty("books")] ICollection<WeatherForecastResponse> Books);
+public record FetchWeatherForecastsResponse([JsonProperty("books")] ICollection<WeatherForecastResponse> WeatherForecasts);
 
 public class WindReadModel 
 {
@@ -48,7 +68,12 @@ public class WindReadModel
         DirectionSecond = wind.DirectionSecond;
     }
 
-    [JsonProperty("speedWindInMetersPerSecond")] public double SpeedWindInMetersPerSecond { get; private set; }
-    [JsonProperty("directionFirst")] public Direction DirectionFirst { get; private set; }
-    [JsonProperty("directionSecond")] public Direction DirectionSecond { get; private set; }
+    [JsonProperty("speedWindInMetersPerSecond")] 
+    public double SpeedWindInMetersPerSecond { get; private set; }
+
+    [JsonProperty("directionFirst")] 
+    public Direction DirectionFirst { get; private set; }
+
+    [JsonProperty("directionSecond")] 
+    public Direction DirectionSecond { get; private set; }
 }
