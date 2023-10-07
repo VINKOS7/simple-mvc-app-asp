@@ -55,6 +55,7 @@ public record FetchWeatherForecastsRequest(
 public record DeleteWeatherForecastByIdRequest([JsonProperty("id")] Guid Id) : IRequest;
 
 public record WindRequestModel(
+    [JsonProperty("id")] Guid Id,
     [JsonProperty("speedWindInMetersPerSecond")] double SpeedWindInMetersPerSecond,
     [JsonProperty("directionFirst")] Direction DirectionFirst,
     [JsonProperty("directionSecond")] Direction DirectionSecond
