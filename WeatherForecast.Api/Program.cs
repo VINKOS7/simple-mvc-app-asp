@@ -21,9 +21,9 @@ builder.Services.Configure<JWTOptions>(builder.Configuration.GetSection("JWTOpti
 
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(Assembly.GetExecutingAssembly()));
 
-builder.Services.AddCors();
-
 builder.Services.AddHttpContextAccessor();
+
+builder.Services.AddControllersWithViews();
 
 builder.Services.AddCors(options =>
 {
@@ -84,6 +84,22 @@ builder.Services.ConfigureInfrastructureServices();
 builder.Services.AddAuthorization();
 
 var app = builder.Build();
+
+if (!app.Environment.IsDevelopment())
+{
+    app.UseExceptionHandler("/Home/Error");
+    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+    app.UseHsts();
+}
+
+app.UseHttpsRedirection();
+app.UseStaticFiles();
+
+app.UseRouting();
+
+app.MapControllerRoute(
+    name: "default",
+    pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.UseHttpsRedirection();
 

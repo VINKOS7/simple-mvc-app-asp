@@ -12,7 +12,7 @@ using WeatherForecast.Infrastructure;
 namespace WeatherForecast.Api.Migrations
 {
     [DbContext(typeof(Context))]
-    [Migration("20231007190343_init")]
+    [Migration("20231007190745_init")]
     partial class init
     {
         /// <inheritdoc />
