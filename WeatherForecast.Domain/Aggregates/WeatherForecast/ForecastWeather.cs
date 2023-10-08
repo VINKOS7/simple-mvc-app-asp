@@ -5,6 +5,7 @@ using NPOI.SS.UserModel;
 using WeatherForecast.Domain.Aggregates.ForecastWeather.Commands;
 using WeatherForecast.Domain.Aggregates.WeatherForecast.Commands;
 using WeatherForecast.Domain.Aggregates.WeatherForecast.Values;
+using WeatherForecast.Domain.Aggregates.WeatherForecast.Values.WindValue.Commands;
 using WeatherForecast.Domain.Aggregates.WeatherForecast.Values.WindValue.Enums;
 
 namespace WeatherForecast.Domain.Aggregates.ForecastWeather;
@@ -35,19 +36,29 @@ public class ForecastWeather : Entity, IAggregateRoot
     }
 
     public static ICollection<ForecastWeather> From(IAddWeatherForecastFromExcelCommand command)
-    {
-        const int offset = 6;
+    {//Welcome to shit code))
+        ICell bufferCell = null;
 
-        var getCell = (int i, int j, int k) => command.WeatherForecasts
+        var getCell = (int i, int j, int k) =>
+        {
+            bufferCell = command.WeatherForecasts
             .GetSheetAt(i)
             .GetRow(j)
             .GetCell(k);
+
+            return bufferCell;
+        };
+
+        
+
 
         var directionFromStringToEnum = (string value, int idx) =>
         {// it is bad code
             var directions = value.Split(',');
 
-            switch(directions[idx])
+            if (idx >= 1 && directions.Length is 1) return Direction.Calm;
+
+            switch (directions[idx])
             {
                 case "Ю": return Direction.South;
                 case "С": return Direction.South;
@@ -61,33 +72,55 @@ public class ForecastWeather : Entity, IAggregateRoot
             }
         };
 
-        List<ForecastWeather> forecastWeathers = new();
+        var getTimeInMinutes = (string value) =>
+        {
+            var hoursAndMinutes = value.Split(":");
+            var hours = hoursAndMinutes[0];
+            var minutes = hoursAndMinutes[1];
+
+            return int.Parse(hours) * 60 + int.Parse(minutes);
+        };
+
+        LinkedList<ForecastWeather> forecastWeathers = new();
+
+        const int offset = 6;
 
         for (int i = 0; i < command.WeatherForecasts.NumberOfSheets; ++i)
             for (int j = offset; j < command.WeatherForecasts.GetSheetAt(i).LastRowNum; ++j)
             {
-
-                forecastWeathers.Add(new()
+                //i know, is bad
+                forecastWeathers.AddLast(new ForecastWeather()
                 {
-                    DateWeatherEvent = DateTime.Now,//DateTime.Parse(getCell(i, j, 0).StringCellValue),
+                    DateWeatherEvent = DateTime.Parse(getCell(i, j, 0).StringCellValue),
+
                     CityName = command.CityName,
-                    Temperature = 2,//getCell(i, j, k).NumericCellValue,
-                    HumidityInPercent = 2,//getCell(i, j, k).NumericCellValue,
-                    DewPoint = 2,//getCell(i, j, k).NumericCellValue,
-                    AtmospherePressure = 2,//(int)getCell(i, j, k).NumericCellValue,
-                    Wind = new Wind()
-                    {
-                        DirectionFirst = Direction.North,//directionFromStringToEnum(getCell(i, j, 6).StringCellValue, 0),
-                        DirectionSecond = Direction.North,//directionFromStringToEnum(getCell(i, j, 6).StringCellValue, 1)
-                    },
-                    CloudinessInPercent = 2,//getCell(i, j, k).NumericCellValue,
-                    CloudBaseInMeters = 2,//(int)getCell(i, j, k).NumericCellValue,
-                    HorizontalVisibilityInKilometer = 2,//(int)getCell(i, j, k).NumericCellValue,
-                    WeatherEvent = "asdsada",//getCell(i, j, 11).StringCellValue,
+
+                    Temperature = getCell(i, j, 10).CellType is CellType.String ? 0 : (int) bufferCell.NumericCellValue,
+
+                    HumidityInPercent = getCell(i, j, 10).CellType is CellType.String ? 0 : (int) bufferCell.NumericCellValue,
+
+                    DewPoint = getCell(i, j, 10).CellType is CellType.String ? 0 : (int) bufferCell.NumericCellValue,
+
+                    AtmospherePressure = getCell(i, j, 10).CellType is CellType.String ? 0 : (int) bufferCell.NumericCellValue,
+
+                    Wind = Wind.From(new WindModel(
+                        getCell(i, j, 10).CellType is CellType.String ? 0 : (int) bufferCell.NumericCellValue,
+                        directionFromStringToEnum(getCell(i, j, 6).StringCellValue, 0), 
+                        directionFromStringToEnum(getCell(i, j, 6).StringCellValue, 1)
+                    )),
+
+                    CloudinessInPercent = getCell(i, j, 10).CellType is CellType.String ? 0 : (int) bufferCell.NumericCellValue,
+
+                    CloudBaseInMeters = getCell(i, j, 10).CellType is CellType.String ? 0 : (int) bufferCell.NumericCellValue,
+
+                    HorizontalVisibilityInKilometer = getCell(i, j, 10).CellType is CellType.String ? 0 : (int) bufferCell.NumericCellValue,
+
+                    WeatherEvent = getCell(i, j, 11).StringCellValue,
                 });
 
-                forecastWeathers[i].SetCreatedAt(DateTime.UtcNow);
-                forecastWeathers[i].SetUpdateAt(DateTime.UtcNow);
+                forecastWeathers.ElementAt(i).DateWeatherEvent.AddMinutes(getTimeInMinutes(getCell(i, j, 1).StringCellValue));
+                forecastWeathers.ElementAt(i).SetCreatedAt(DateTime.UtcNow);
+                forecastWeathers.ElementAt(i).SetUpdateAt(DateTime.UtcNow);
             }
 
         return forecastWeathers;
@@ -96,11 +129,11 @@ public class ForecastWeather : Entity, IAggregateRoot
     public DateTime DateWeatherEvent { get; private set; }
     public string CityName { get; private set; }
     public double Temperature { get; private set; }
-    public double HumidityInPercent { get => HumidityInPercent; set => _ = value <= 100 ? value : 100; }
+    public int HumidityInPercent { get => HumidityInPercent; set => _ = value <= 100 ? value > 0 ? value : 0 : 100; }
     public double DewPoint { get; private set; }
     public int AtmospherePressure { get; private set; }
     public Wind Wind { get; private set; }
-    public double CloudinessInPercent { get => CloudinessInPercent; set => _ = value <= 100 ? value : 100; }
+    public int CloudinessInPercent { get => CloudinessInPercent; set => _ = value <= 100 ? value > 0 ? value : 0 : 100; }
     public int CloudBaseInMeters { get; private set; }
     public int HorizontalVisibilityInKilometer { get; private set; }
     public string WeatherEvent { get; private set; }
@@ -120,4 +153,11 @@ public class ForecastWeather : Entity, IAggregateRoot
         HorizontalVisibilityInKilometer = command.HorizontalVisibilityInKilometer;
         WeatherEvent = command.WeatherEvent;
     }
+
+    private record WindModel(
+        double SpeedWindInMetersPerSecond,
+        Direction DirectionFirst,
+        Direction DirectionSecond
+    ) : IAddWindValueCommand;
 }
+

@@ -1,7 +1,6 @@
 ﻿using MediatR;
 using Newtonsoft.Json;
 using NPOI.SS.UserModel;
-using Microsoft.AspNetCore.Http;
 
 using WeatherForecast.Domain.Aggregates.ForecastWeather.Commands;
 using WeatherForecast.Api.Responses;
@@ -18,18 +17,18 @@ public record AddWeatherForecastFromExelRequest(
 )
 : IAddWeatherForecastFromExcelCommand, IRequest<IEnumerable<Guid>>
 {
-    IWorkbook IAddWeatherForecastFromExcelCommand.WeatherForecasts => new XSSFWorkbook(WeatherForecasts.OpenReadStream());
+    IWorkbook IAddWeatherForecastFromExcelCommand.WeatherForecasts => new XSSFWorkbook(WeatherForecasts is not null ? WeatherForecasts.OpenReadStream() : throw new BadHttpRequestException("file is empty"));
 }
 
 public record AddWeatherForecastRequest(
     [JsonProperty("dateWeatherEvent")] DateTime DateWeatherEvent,
     [JsonProperty("cityName")] string CityName,
     [JsonProperty("temperature")] double Temperature,
-    [JsonProperty("humidityInPercent")] double HumidityInPercent,
+    [JsonProperty("humidityInPercent")] int HumidityInPercent,
     [JsonProperty("dewPoint")] double DewPoint,
     [JsonProperty("atmospherePressure")] int AtmospherePressure,
     [JsonProperty("wind")] WindRequestModel Wind,
-    [JsonProperty("cloudinessInPercent")] double CloudinessInPercent,
+    [JsonProperty("cloudinessInPercent")] int CloudinessInPercent,
     [JsonProperty("cloudBaseInMeters")] int CloudBaseInMeters,
     [JsonProperty("horizontalVisibilityInKilometer")] int HorizontalVisibilityInKilometer,
     [JsonProperty("weatherEvent")] string WeatherEvent
@@ -44,11 +43,11 @@ public record ChangeWeatherForecastRequest(
     [JsonProperty("dateWeatherEvent")] DateTime DateWeatherEvent,
     [JsonProperty("cityName")] string CityName,
     [JsonProperty("temperature")] double Temperature,
-    [JsonProperty("humidityInPercent")] double HumidityInPercent,
+    [JsonProperty("humidityInPercent")] int HumidityInPercent,
     [JsonProperty("dewPoint")] double DewPoint,
     [JsonProperty("atmospherePressure")] int AtmospherePressure,
     [JsonProperty("wind")] WindRequestModel Wind,
-    [JsonProperty("cloudinessInPercent")] double CloudinessInPercent,
+    [JsonProperty("cloudinessInPercent")] int CloudinessInPercent,
     [JsonProperty("cloudBaseInMeters")] int CloudBaseInMeters,
     [JsonProperty("horizontalVisibilityInKilometer")] int HorizontalVisibilityInKilometer,
     [JsonProperty("weatherEvent")] string WeatherEvent
@@ -68,7 +67,6 @@ public record FetchWeatherForecastsRequest(
 public record DeleteWeatherForecastByIdRequest([JsonProperty("id")] Guid Id) : IRequest;
 
 public record WindRequestModel(
-    [JsonProperty("id")] Guid Id,
     [JsonProperty("speedWindInMetersPerSecond")] double SpeedWindInMetersPerSecond,
     [JsonProperty("directionFirst")] Direction DirectionFirst,
     [JsonProperty("directionSecond")] Direction DirectionSecond

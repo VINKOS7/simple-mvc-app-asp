@@ -8,7 +8,7 @@ public class Wind : ValueObject
 {
     public static Wind From(IAddWindValueCommand command) => new()
     {
-
+        Id = Guid.NewGuid(),
         SpeedWindInMetersPerSecond = command.SpeedWindInMetersPerSecond,
         DirectionFirst = command.DirectionFirst,
         DirectionSecond = command.DirectionSecond
@@ -16,7 +16,7 @@ public class Wind : ValueObject
 
     public Guid Id { get; set; }
     public double SpeedWindInMetersPerSecond { get; set; }
-    public Direction DirectionFirst { get => DirectionFirst; init => DirectionFirst = value; }
+    public Direction DirectionFirst { get; init; }
     public Direction DirectionSecond { get => DirectionSecond; init => _ = value is not Direction.Calm ? value : Direction.Calm; }
 
     protected override IEnumerable<object> GetAtomicValues()
