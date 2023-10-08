@@ -1,0 +1,16 @@
+﻿@ViewData["Title"] Add weather forecasts from excel
+@model WeatherForecast.Api.Views.WeatherForecast.AddFromExcelViewModel
+
+<h1>@ViewData["Title"]</h1>
+<h2>@Model.Message</h2>
+<form method="post" asp-antiforgery="true">
+    <p>
+        <label asp-for="Request.CityName">Название города</label><br/>
+        <input type="text" asp-for="Request.CityName"/>
+    </p>
+    <p>
+        <label asp-for="Request.WeatherForecasts">Фаил</label><br/>
+        <input type="file" asp-for="Request.WeatherForecasts"/>
+    </p>
+    <input type="submit" value="Отправить" />
+</form>

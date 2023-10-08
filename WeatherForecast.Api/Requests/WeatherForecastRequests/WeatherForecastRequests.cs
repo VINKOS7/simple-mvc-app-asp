@@ -1,17 +1,29 @@
 ﻿using MediatR;
 using Newtonsoft.Json;
+using NPOI.SS.UserModel;
+using Microsoft.AspNetCore.Http;
 
-using WeatherForecast.Domain.Aggregates.ForecastWeather;
 using WeatherForecast.Domain.Aggregates.ForecastWeather.Commands;
 using WeatherForecast.Api.Responses;
 using WeatherForecast.Domain.Aggregates.WeatherForecast.Values.WindValue.Commands;
 using WeatherForecast.Domain.Aggregates.WeatherForecast.Values.WindValue.Enums;
-using WeatherForecast.Domain.Aggregates.WeatherForecast.Values;
+using WeatherForecast.Domain.Aggregates.WeatherForecast.Commands;
+using NPOI.XSSF.UserModel;
 
 namespace WeatherForecast.Api.Requests;
 
+public record AddWeatherForecastFromExelRequest(
+     [JsonProperty("cityName")] string CityName,
+     [JsonProperty("weatherForecasts")] IFormFile WeatherForecasts
+)
+: IAddWeatherForecastFromExcelCommand, IRequest<IEnumerable<Guid>>
+{
+    IWorkbook IAddWeatherForecastFromExcelCommand.WeatherForecasts => new XSSFWorkbook(WeatherForecasts.OpenReadStream());
+}
+
 public record AddWeatherForecastRequest(
     [JsonProperty("dateWeatherEvent")] DateTime DateWeatherEvent,
+    [JsonProperty("cityName")] string CityName,
     [JsonProperty("temperature")] double Temperature,
     [JsonProperty("humidityInPercent")] double HumidityInPercent,
     [JsonProperty("dewPoint")] double DewPoint,
@@ -30,6 +42,7 @@ public record AddWeatherForecastRequest(
 public record ChangeWeatherForecastRequest(
     [JsonProperty("id")] Guid Id,
     [JsonProperty("dateWeatherEvent")] DateTime DateWeatherEvent,
+    [JsonProperty("cityName")] string CityName,
     [JsonProperty("temperature")] double Temperature,
     [JsonProperty("humidityInPercent")] double HumidityInPercent,
     [JsonProperty("dewPoint")] double DewPoint,

@@ -19,15 +19,15 @@ public class AddWeatherForecastRequestHandler : IRequestHandler<AddWeatherForeca
     {
         try
         {
-            var book = ForecastWeather.From(request);
+            var weatherForecast = ForecastWeather.From(request);
 
-            if (book is null) throw new BadHttpRequestException("bad obj");
+            if (weatherForecast is null) throw new BadHttpRequestException("bad obj");
 
-            await _weatherForecastRepo.AddAsync(book);
+            await _weatherForecastRepo.AddAsync(weatherForecast);
 
             await _weatherForecastRepo.UnitOfWork.SaveEntitiesAsync();
 
-            return book.Id;
+            return weatherForecast.Id;
         }
         catch (Exception ex)
         {

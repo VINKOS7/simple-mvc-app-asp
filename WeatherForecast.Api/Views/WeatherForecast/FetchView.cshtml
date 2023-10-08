@@ -1,10 +1,11 @@
-﻿@page
+﻿@ViewData["Title"] Weather forecasts
+
+<h1>@ViewData["Title"]</h1>
 
 @model WeatherForecast.Api.Responses.FetchWeatherForecastsResponse
 
 @using WeatherForecast.Domain.Aggregates.WeatherForecast.Values.WindValue.Enums;
 
-@ViewData["FetchWeatherForecasts"] = "Weather forecasts";
 
 <div>
     @foreach (var wf in Model.WeatherForecasts)

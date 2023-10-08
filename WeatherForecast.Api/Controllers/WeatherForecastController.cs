@@ -23,14 +23,20 @@ public class WeatherForecastController : Controller
     public async Task<IActionResult> FetchView([FromQuery] int offset = 0, [FromQuery] int size = 20) => View(await _mediator.Send(new FetchWeatherForecastsRequest(offset, size)));
 
 
-    [Authorize, HttpPost("add")]
+    [AllowAnonymous, HttpPost("add")]
     public async Task<Guid> Add([FromBody] AddWeatherForecastRequest request) => await _mediator.Send(request);
 
+    [AllowAnonymous, HttpPost("add/from/excel")]
+    public async Task<IEnumerable<Guid>> AddFromExcel([FromBody] AddWeatherForecastFromExelRequest request) => await _mediator.Send(request);
 
-    [Authorize, HttpPost("change")]
+    [AllowAnonymous, HttpGet("add/from/excel")]
+    public async Task<IActionResult> AddFromExcelView() => View();
+
+
+    [AllowAnonymous, HttpPost("change")]
     public async Task Change([FromBody] ChangeWeatherForecastRequest request) => await _mediator.Send(request);
 
 
-    [Authorize, HttpDelete("delete")]
+    [AllowAnonymous, HttpDelete("delete")]
     public async Task Delete([FromQuery] Guid id) => await _mediator.Send(new DeleteWeatherForecastByIdRequest(id));
 }

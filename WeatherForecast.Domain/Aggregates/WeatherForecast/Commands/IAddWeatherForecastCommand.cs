@@ -6,6 +6,7 @@ namespace WeatherForecast.Domain.Aggregates.ForecastWeather.Commands;
 public interface IAddWeatherForecastCommand
 {
     public DateTime DateWeatherEvent { get; }
+    public string CityName { get; }
     public double Temperature { get; }
     public double HumidityInPercent { get; }
     public double DewPoint { get; }
