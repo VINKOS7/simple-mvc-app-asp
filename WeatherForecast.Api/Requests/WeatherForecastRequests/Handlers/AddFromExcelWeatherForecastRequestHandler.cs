@@ -23,7 +23,7 @@ public class AddFromExсelWeatherForecastRequestHandler : IRequestHandler<AddWea
 
             if (weatherForecasts is null) throw new BadHttpRequestException("bad obj");
 
-            foreach(var weatherForecast in weatherForecasts) await _weatherForecastRepo.AddAsync(weatherForecast);
+            foreach (var weatherForecast in weatherForecasts) await _weatherForecastRepo.AddAsync(weatherForecast);
 
             await _weatherForecastRepo.UnitOfWork.SaveEntitiesAsync();
 

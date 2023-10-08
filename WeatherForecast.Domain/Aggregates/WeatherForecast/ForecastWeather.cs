@@ -61,38 +61,34 @@ public class ForecastWeather : Entity, IAggregateRoot
             }
         };
 
-        var countRecords = 0;
-
-        for (int i = 0; i < command.WeatherForecasts.NumberOfNames; ++i) countRecords += command.WeatherForecasts.GetSheetAt(i).LastRowNum - offset - 1;
-
-        List<ForecastWeather> forecastWeathers = new(command.WeatherForecasts.NumberOfSheets);
+        List<ForecastWeather> forecastWeathers = new();
 
         for (int i = 0; i < command.WeatherForecasts.NumberOfSheets; ++i)
-            for (int j = offset; j < command.WeatherForecasts.NumberOfSheets; ++j)
-                for (int k = 0; k < command.WeatherForecasts.NumberOfSheets; ++k)
-                {
-                    forecastWeathers[i] = new ForecastWeather()
-                    {
-                        DateWeatherEvent = getCell(i, j, k).DateCellValue,
-                        CityName = command.CityName,
-                        Temperature = getCell(i, j, k).NumericCellValue,
-                        HumidityInPercent = getCell(i, j, k).NumericCellValue,
-                        DewPoint = getCell(i, j, k).NumericCellValue,
-                        AtmospherePressure = (int)getCell(i, j, k).NumericCellValue,
-                        Wind = new Wind()
-                        {
-                            DirectionFirst = directionFromStringToEnum(getCell(i, j, k).StringCellValue, 0),
-                            DirectionSecond = directionFromStringToEnum(getCell(i, j, k).StringCellValue, 1)
-                        },
-                        CloudinessInPercent = getCell(i, j, k).NumericCellValue,
-                        CloudBaseInMeters = (int)getCell(i, j, k).NumericCellValue,
-                        HorizontalVisibilityInKilometer = (int)getCell(i, j, k).NumericCellValue,
-                        WeatherEvent = getCell(i, j, k).StringCellValue,
-                    };
+            for (int j = offset; j < command.WeatherForecasts.GetSheetAt(i).LastRowNum; ++j)
+            {
 
-                    forecastWeathers[i].SetCreatedAt(DateTime.UtcNow);
-                    forecastWeathers[i].SetUpdateAt(DateTime.UtcNow);
-                }
+                forecastWeathers.Add(new()
+                {
+                    DateWeatherEvent = DateTime.Now,//DateTime.Parse(getCell(i, j, 0).StringCellValue),
+                    CityName = command.CityName,
+                    Temperature = 2,//getCell(i, j, k).NumericCellValue,
+                    HumidityInPercent = 2,//getCell(i, j, k).NumericCellValue,
+                    DewPoint = 2,//getCell(i, j, k).NumericCellValue,
+                    AtmospherePressure = 2,//(int)getCell(i, j, k).NumericCellValue,
+                    Wind = new Wind()
+                    {
+                        DirectionFirst = Direction.North,//directionFromStringToEnum(getCell(i, j, 6).StringCellValue, 0),
+                        DirectionSecond = Direction.North,//directionFromStringToEnum(getCell(i, j, 6).StringCellValue, 1)
+                    },
+                    CloudinessInPercent = 2,//getCell(i, j, k).NumericCellValue,
+                    CloudBaseInMeters = 2,//(int)getCell(i, j, k).NumericCellValue,
+                    HorizontalVisibilityInKilometer = 2,//(int)getCell(i, j, k).NumericCellValue,
+                    WeatherEvent = "asdsada",//getCell(i, j, 11).StringCellValue,
+                });
+
+                forecastWeathers[i].SetCreatedAt(DateTime.UtcNow);
+                forecastWeathers[i].SetUpdateAt(DateTime.UtcNow);
+            }
 
         return forecastWeathers;
     }
