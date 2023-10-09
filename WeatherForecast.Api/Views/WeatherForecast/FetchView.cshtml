@@ -8,17 +8,34 @@
 
 
 <div>
-    @foreach (var wf in Model.WeatherForecasts)
-    {
-        <h5>@wf.DateWeatherEvent</h5>
-        <h5>@wf.Temperature</h5>
-        <h5>@wf.HumidityInPercent</h5>
-        <h5>@wf.DewPoint</h5>
-        <h5>@wf.AtmospherePressure</h5>
-        <h5>@wf.Wind.DirectionFirst</h5>
-        <h5>@if (wf.Wind.DirectionSecond is not Direction.Calm) @wf.Wind.DirectionSecond</h5>
-        <h5>@wf.CloudBaseInMeters</h5>
-        <h5>@wf.CloudinessInPercent</h5>
-        <h5>@wf.HorizontalVisibilityInKilometer</h5>
-    }
+    <div class="items">
+        @foreach (var wf in Model.WeatherForecasts)
+        {
+            <div class="item">
+                <h5 class="field">@wf.DateWeatherEvent</h5>
+                <h5 class="field">@wf.Temperature</h5>
+                <h5 class="field">@wf.HumidityInPercent</h5>
+                <h5 class="field">@wf.DewPoint</h5>
+                <h5 class="field">@wf.AtmospherePressure</h5>
+                <h5 class="field">@wf.Wind.DirectionFirst</h5>
+                <h5 class="field">@if (wf.Wind.DirectionSecond != wf.Wind.DirectionFirst && wf.Wind.DirectionSecond is not Direction.Calm) @wf.Wind.DirectionSecond</h5>
+                <h5 class="field">@wf.CloudBaseInMeters</h5>
+                <h5 class="field">@wf.CloudinessInPercent</h5>
+                <h5 class="field">@wf.HorizontalVisibilityInKilometer</h5>
+            </div>
+        }
+    </div>
 </div>
+
+<style lang="css" scoped> 
+    .item {
+        background-color: blanchedalmond;
+        border-radius: 5px;
+        margin: 10px;
+    }
+
+    .field{
+        display: inline-flex;
+        margin: 20px;
+    }
+</style>
