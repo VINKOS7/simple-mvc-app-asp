@@ -18,7 +18,7 @@ public class ForecastWeather : Entity, IAggregateRoot
         {
             Id = Guid.NewGuid(),
             CityName = command.CityName,
-            DateWeatherEvent = command.DateWeatherEvent,
+            DateWeatherEvent = DateTime.SpecifyKind(command.DateWeatherEvent, DateTimeKind.Utc),
             Temperature = command.Temperature,
             HumidityInPercent = command.HumidityInPercent,
             DewPoint = command.DewPoint,
@@ -26,7 +26,8 @@ public class ForecastWeather : Entity, IAggregateRoot
             Wind = Wind.From(command.Wind),
             CloudBaseInMeters = command.CloudBaseInMeters,
             CloudinessInPercent = command.CloudinessInPercent,
-            HorizontalVisibilityInKilometer = command.HorizontalVisibilityInKilometer
+            HorizontalVisibilityInKilometer = command.HorizontalVisibilityInKilometer,
+            WeatherEvent = command.WeatherEvent
         };
 
         forecastWeather.SetCreatedAt(DateTime.UtcNow);
@@ -35,22 +36,13 @@ public class ForecastWeather : Entity, IAggregateRoot
         return forecastWeather;
     }
 
-    public static ICollection<ForecastWeather> From(IAddWeatherForecastFromExcelCommand command)
+    public static LinkedList<ForecastWeather> From(IAddWeatherForecastFromExcelCommand command)
     {//Welcome to shit code))
         ICell bufferCell = null;
 
-        var getCell = (int i, int j, int k) =>
-        {
-            bufferCell = command.WeatherForecasts
-            .GetSheetAt(i)
-            .GetRow(j)
-            .GetCell(k);
-
-            return bufferCell;
-        };
-
-        
-
+        var getCell = (int i, int j, ISheet sheet) => bufferCell = sheet
+            .GetRow(i)
+            .GetCell(j);
 
         var directionFromStringToEnum = (string value, int idx) =>
         {// it is bad code
@@ -86,42 +78,52 @@ public class ForecastWeather : Entity, IAggregateRoot
         const int offset = 6;
 
         for (int i = 0; i < command.WeatherForecasts.NumberOfSheets; ++i)
-            for (int j = offset; j < command.WeatherForecasts.GetSheetAt(i).LastRowNum; ++j)
+        {
+
+            var asd = getCell(67, 11, command.WeatherForecasts.GetSheetAt(0));
+
+
+            var sheet = command.WeatherForecasts.GetSheetAt(i);
+
+            for (int j = offset; j < sheet.LastRowNum; ++j)
             {
-                //i know, is bad
+                if (j is 67) j = 67;
                 forecastWeathers.AddLast(new ForecastWeather()
                 {
-                    DateWeatherEvent = DateTime.Parse(getCell(i, j, 0).StringCellValue),
+                    Id = Guid.NewGuid(),
+
+                    DateWeatherEvent = DateTime.SpecifyKind(DateTime.Parse(getCell(j, 0, sheet).StringCellValue), DateTimeKind.Utc),
 
                     CityName = command.CityName,
 
-                    Temperature = getCell(i, j, 10).CellType is CellType.String ? 0 : (int) bufferCell.NumericCellValue,
+                    Temperature = getCell(j, 2, sheet).CellType is CellType.String ? 0 : (int)bufferCell.NumericCellValue,
 
-                    HumidityInPercent = getCell(i, j, 10).CellType is CellType.String ? 0 : (int) bufferCell.NumericCellValue,
+                    HumidityInPercent = getCell(j, 3, sheet).CellType is CellType.String ? 0 : (int)bufferCell.NumericCellValue,
 
-                    DewPoint = getCell(i, j, 10).CellType is CellType.String ? 0 : (int) bufferCell.NumericCellValue,
+                    DewPoint = getCell(j, 4, sheet).CellType is CellType.String ? 0 : (int)bufferCell.NumericCellValue,
 
-                    AtmospherePressure = getCell(i, j, 10).CellType is CellType.String ? 0 : (int) bufferCell.NumericCellValue,
+                    AtmospherePressure = getCell(j, 5, sheet).CellType is CellType.String ? 0 : (int)bufferCell.NumericCellValue,
 
                     Wind = Wind.From(new WindModel(
-                        getCell(i, j, 10).CellType is CellType.String ? 0 : (int) bufferCell.NumericCellValue,
-                        directionFromStringToEnum(getCell(i, j, 6).StringCellValue, 0), 
-                        directionFromStringToEnum(getCell(i, j, 6).StringCellValue, 1)
+                        getCell(j, 7, sheet).CellType is CellType.String ? 0 : (int)bufferCell.NumericCellValue,
+                        directionFromStringToEnum(getCell(j, 6, sheet).StringCellValue, 0),
+                        directionFromStringToEnum(getCell(j, 6, sheet).StringCellValue, 1)
                     )),
 
-                    CloudinessInPercent = getCell(i, j, 10).CellType is CellType.String ? 0 : (int) bufferCell.NumericCellValue,
+                    CloudinessInPercent = getCell(j, 8, sheet).CellType is CellType.String ? 0 : (int)bufferCell.NumericCellValue,
 
-                    CloudBaseInMeters = getCell(i, j, 10).CellType is CellType.String ? 0 : (int) bufferCell.NumericCellValue,
+                    CloudBaseInMeters = getCell(j, 9, sheet).CellType is CellType.String ? 0 : (int)bufferCell.NumericCellValue,
 
-                    HorizontalVisibilityInKilometer = getCell(i, j, 10).CellType is CellType.String ? 0 : (int) bufferCell.NumericCellValue,
+                    HorizontalVisibilityInKilometer = getCell(j, 10, sheet).CellType is CellType.String ? 0 : (int)bufferCell.NumericCellValue,
 
-                    WeatherEvent = getCell(i, j, 11).StringCellValue,
+                    WeatherEvent = getCell(j, 11, sheet)  is not null? bufferCell.StringCellValue: " ",
                 });
 
-                forecastWeathers.ElementAt(i).DateWeatherEvent.AddMinutes(getTimeInMinutes(getCell(i, j, 1).StringCellValue));
+                forecastWeathers.ElementAt(i).DateWeatherEvent.AddMinutes(getTimeInMinutes(getCell(j, 1, sheet).StringCellValue));
                 forecastWeathers.ElementAt(i).SetCreatedAt(DateTime.UtcNow);
                 forecastWeathers.ElementAt(i).SetUpdateAt(DateTime.UtcNow);
             }
+        }
 
         return forecastWeathers;
     }
@@ -129,11 +131,11 @@ public class ForecastWeather : Entity, IAggregateRoot
     public DateTime DateWeatherEvent { get; private set; }
     public string CityName { get; private set; }
     public double Temperature { get; private set; }
-    public int HumidityInPercent { get => HumidityInPercent; set => _ = value <= 100 ? value > 0 ? value : 0 : 100; }
+    public int HumidityInPercent { get; private set; }
     public double DewPoint { get; private set; }
     public int AtmospherePressure { get; private set; }
     public Wind Wind { get; private set; }
-    public int CloudinessInPercent { get => CloudinessInPercent; set => _ = value <= 100 ? value > 0 ? value : 0 : 100; }
+    public int CloudinessInPercent { get; private set; }
     public int CloudBaseInMeters { get; private set; }
     public int HorizontalVisibilityInKilometer { get; private set; }
     public string WeatherEvent { get; private set; }
@@ -158,6 +160,8 @@ public class ForecastWeather : Entity, IAggregateRoot
         double SpeedWindInMetersPerSecond,
         Direction DirectionFirst,
         Direction DirectionSecond
-    ) : IAddWindValueCommand;
+    )
+    : IAddWindValueCommand;
 }
+
 

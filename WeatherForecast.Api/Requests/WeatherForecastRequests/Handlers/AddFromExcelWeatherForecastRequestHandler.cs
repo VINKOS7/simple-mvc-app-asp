@@ -4,7 +4,7 @@ using MediatR;
 
 namespace WeatherForecast.Api.Requests.Handlers.WeatherForecastHandlers;
 
-public class AddFromExсelWeatherForecastRequestHandler : IRequestHandler<AddWeatherForecastFromExelRequest, IEnumerable<Guid>>
+public class AddFromExсelWeatherForecastRequestHandler : IRequestHandler<AddWeatherForecastFromExelRequest>
 {
     private readonly IForecastWeatherRepo _weatherForecastRepo;
     private readonly ILogger<AddWeatherForecastRequestHandler> _logger;
@@ -15,7 +15,7 @@ public class AddFromExсelWeatherForecastRequestHandler : IRequestHandler<AddWea
         _logger = logger;
     }
 
-    public async Task<IEnumerable<Guid>> Handle(AddWeatherForecastFromExelRequest request, CancellationToken cancellationToken)
+    public async Task Handle(AddWeatherForecastFromExelRequest request, CancellationToken cancellationToken)
     {
         try
         {
@@ -23,11 +23,9 @@ public class AddFromExсelWeatherForecastRequestHandler : IRequestHandler<AddWea
 
             if (weatherForecasts is null) throw new BadHttpRequestException("bad obj");
 
-            foreach (var weatherForecast in weatherForecasts) await _weatherForecastRepo.AddAsync(weatherForecast);
+            foreach (var weatherForecast in weatherForecasts) await _weatherForecastRepo.AddNotDoubleByDateAsync(weatherForecast);
 
             await _weatherForecastRepo.UnitOfWork.SaveEntitiesAsync();
-
-            return weatherForecasts.Select(wf => wf.Id);
         }
         catch (Exception ex)
         {

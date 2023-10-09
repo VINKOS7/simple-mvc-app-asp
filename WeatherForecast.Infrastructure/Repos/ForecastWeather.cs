@@ -15,19 +15,22 @@ public class ForecastWeatherRepo : IForecastWeatherRepo
 
     public IUnitOfWork UnitOfWork => _db;
 
-
     public async Task AddAsync(ForecastWeather forecastWeather) => await _db.ForecastsWeather.AddAsync(forecastWeather);
 
+    public async Task AddNotDoubleByDateAsync(ForecastWeather forecastWeather)
+    {
+        if (_db.ForecastsWeather.Any(wf => wf.DateWeatherEvent == forecastWeather.DateWeatherEvent && wf.CityName == forecastWeather.CityName)) return;
+
+        await _db.ForecastsWeather.AddAsync(forecastWeather);
+    }
 
     public async Task<ICollection<ForecastWeather>> FetchAsync(int offset, int size) => await _db.ForecastsWeather
         .Skip(offset)
         .Take(size)
         .OrderBy(b => b.CreatedAt)
         .ToListAsync();
-     
 
     public async Task<ForecastWeather> FindByIdAsync(Guid Id) => await _db.ForecastsWeather.FirstOrDefaultAsync(fw => fw.Id == Id);
-
 
     public async Task RemoveByIdAsync(Guid Id)
     {

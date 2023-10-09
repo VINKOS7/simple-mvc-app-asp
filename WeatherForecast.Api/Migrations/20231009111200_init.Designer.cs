@@ -12,7 +12,7 @@ using WeatherForecast.Infrastructure;
 namespace WeatherForecast.Api.Migrations
 {
     [DbContext(typeof(Context))]
-    [Migration("20231008163824_init")]
+    [Migration("20231009111200_init")]
     partial class init
     {
         /// <inheritdoc />
@@ -41,8 +41,8 @@ namespace WeatherForecast.Api.Migrations
                     b.Property<int>("CloudBaseInMeters")
                         .HasColumnType("integer");
 
-                    b.Property<double>("CloudinessInPercent")
-                        .HasColumnType("double precision");
+                    b.Property<int>("CloudinessInPercent")
+                        .HasColumnType("integer");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
@@ -56,8 +56,8 @@ namespace WeatherForecast.Api.Migrations
                     b.Property<int>("HorizontalVisibilityInKilometer")
                         .HasColumnType("integer");
 
-                    b.Property<double>("HumidityInPercent")
-                        .HasColumnType("double precision");
+                    b.Property<int>("HumidityInPercent")
+                        .HasColumnType("integer");
 
                     b.Property<double>("Temperature")
                         .HasColumnType("double precision");

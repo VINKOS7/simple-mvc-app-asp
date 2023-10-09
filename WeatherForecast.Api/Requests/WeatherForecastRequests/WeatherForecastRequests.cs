@@ -15,7 +15,7 @@ public record AddWeatherForecastFromExelRequest(
      [JsonProperty("cityName")] string CityName,
      [JsonProperty("weatherForecasts")] IFormFile WeatherForecasts
 )
-: IAddWeatherForecastFromExcelCommand, IRequest<IEnumerable<Guid>>
+: IAddWeatherForecastFromExcelCommand, IRequest
 {
     IWorkbook IAddWeatherForecastFromExcelCommand.WeatherForecasts => new XSSFWorkbook(WeatherForecasts is not null ? WeatherForecasts.OpenReadStream() : throw new BadHttpRequestException("file is empty"));
 }
@@ -59,8 +59,8 @@ public record ChangeWeatherForecastRequest(
 
 
 public record FetchWeatherForecastsRequest(
-    [JsonProperty("offset")] int Offset,
-    [JsonProperty("size")] int Size
+    [JsonProperty("offset")] int Offset = 0,
+    [JsonProperty("size")] int Size = 20
 ) 
 : IRequest<FetchWeatherForecastsResponse>;
 

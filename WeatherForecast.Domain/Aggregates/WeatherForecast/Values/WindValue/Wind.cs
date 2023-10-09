@@ -17,7 +17,7 @@ public class Wind : ValueObject
     public Guid Id { get; set; }
     public double SpeedWindInMetersPerSecond { get; set; }
     public Direction DirectionFirst { get; init; }
-    public Direction DirectionSecond { get => DirectionSecond; init => _ = value is not Direction.Calm ? value : Direction.Calm; }
+    public Direction DirectionSecond { get; init; }
 
     protected override IEnumerable<object> GetAtomicValues()
     {

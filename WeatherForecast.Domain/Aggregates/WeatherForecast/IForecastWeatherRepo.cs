@@ -6,6 +6,8 @@ public interface IForecastWeatherRepo : IRepository<ForecastWeather>
 {
     public Task AddAsync(ForecastWeather book);
 
+    public Task AddNotDoubleByDateAsync(ForecastWeather forecastWeather);
+
     public Task RemoveByIdAsync(Guid id);
 
     public Task<ForecastWeather> FindByIdAsync(Guid Id);

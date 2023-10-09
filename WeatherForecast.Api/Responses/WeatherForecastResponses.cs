@@ -57,7 +57,9 @@ public class WeatherForecastResponse
     public string WeatherEvent { get; private set; }
 }
 
-public record FetchWeatherForecastsResponse([JsonProperty("weatherForecasts")] ICollection<WeatherForecastResponse> WeatherForecasts);
+public record FetchWeatherForecastsFromExcelResponse([JsonProperty("weatherForecasts")] IReadOnlyCollection<WeatherForecastResponse> WeatherForecasts);
+
+public record FetchWeatherForecastsResponse([JsonProperty("weatherForecasts")] IReadOnlyCollection<WeatherForecastResponse> WeatherForecasts);
 
 public class WindReadModel 
 {
