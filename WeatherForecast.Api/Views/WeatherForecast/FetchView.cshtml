@@ -9,6 +9,7 @@
 
 <div>
     <div class="items">
+        <button onclick="addItems()">Ещё 20</button>
         @foreach (var wf in Model.WeatherForecasts)
         {
             <div class="item">
@@ -24,8 +25,91 @@
                 <h5 class="field">@wf.HorizontalVisibilityInKilometer</h5>
             </div>
         }
+       
     </div>
 </div>
+
+<script>
+    var offset = 20
+
+    addItems = async () => {      
+        const response = await fetch(`/WeatherForecast/fetch?offset=${offset}&size=20`)
+
+        offset += 20   
+
+        var items = document.querySelector(".items")
+        var weatherForecasts = (await response.json()).weatherForecasts
+
+        //indian style start
+        for (let i = 0; i < weatherForecasts.length; ++i) {
+            var item = document.createElement("div")
+            var field = document.createElement("h5")
+
+            item.className = "item"
+
+            field.className = "field"
+            field.innerHTML = weatherForecasts[i].dateWeatherEvent.toString()
+            item.appendChild(field)
+
+            field = document.createElement("h5")
+            field.className = "field"
+            field.innerHTML = weatherForecasts[i].temperature
+            item.appendChild(field)
+
+            field = document.createElement("h5")
+            field.className = "field"
+            field.innerHTML = weatherForecasts[i].humidityInPercent
+            item.appendChild(field)
+
+            field = document.createElement("h5")
+            field.className = "field"
+            field.innerHTML = weatherForecasts[i].dewPoint
+            item.appendChild(field)
+
+            field = document.createElement("h5")
+            field.className = "field"
+            field.innerHTML = weatherForecasts[i].atmospherePressure
+            item.appendChild(field)
+
+            field = document.createElement("h5")
+            field.className = "field"
+            field.innerHTML = weatherForecasts[i].wind.directionFirst
+            item.appendChild(field)
+
+            if (weatherForecasts[i].wind.directionFirst != weatherForecasts[i].wind.directionSecond && weatherForecasts[i].wind.directionSecond != "Calm") {
+                field = document.createElement("h5")
+                field.className = "field"
+                field.innerHTML = weatherForecasts[i].wind.directionSecond
+                item.appendChild(field)
+            }
+
+            field = document.createElement("h5")
+            field.className = "field"
+            field.innerHTML = weatherForecasts[i].cloudinessInPercent
+            item.appendChild(field)
+
+            field = document.createElement("h5")
+            field.className = "field"
+            field.innerHTML = weatherForecasts[i].cloudBaseInMeters
+            item.appendChild(field)
+
+            field = document.createElement("h5")
+            field.className = "field"
+            field.innerHTML = weatherForecasts[i].horizontalVisibilityInKilometer
+            item.appendChild(field)
+
+            field = document.createElement("h5")
+            field.className = "field"
+            field.innerHTML = weatherForecasts[i].weatherEvent
+            item.appendChild(field)
+
+            items.appendChild(item)
+        }
+
+        console.log(items)
+       
+    }
+</script>
 
 <style lang="css" scoped> 
     .item {
@@ -39,3 +123,44 @@
         margin: 20px;
     }
 </style>
+
+@{
+    var a = "";
+    string GetBaseUrl() {
+        a = Url.ActionContext.HttpContext.Request.Scheme + '/' + Url.ActionContext.HttpContext.Request.Host;
+
+        return a;
+    }
+
+    /*
+                 field.innerHTML = weatherForecasts[i].dateWeatherEvent.toString()
+                    item.appendChild(field)
+
+            field.innerHTML = weatherForecasts[i].temperature
+                    item.appendChild(field)
+
+            field.innerHTML = weatherForecasts[i].humidityInPercent
+                    item.appendChild(field)
+
+            field.innerHTML = weatherForecasts[i].dewPoint
+                    item.appendChild(field)
+
+            field.innerHTML = weatherForecasts[i].atmospherePressure
+                    item.appendChild(field)
+
+            field.innerHTML = weatherForecasts[i].wind
+                    item.appendChild(field)
+
+            field.innerHTML = weatherForecasts[i].cloudinessInPercent
+                    item.appendChild(field)
+
+            field.innerHTML = weatherForecasts[i].cloudBaseInMeters
+                    item.appendChild(field)
+
+            field.innerHTML = weatherForecasts[i].horizontalVisibilityInKilometer
+                    item.appendChild(field)
+
+            field.innerHTML = weatherForecasts[i].weatherEvent
+    item.appendChild(field)
+    */
+}
