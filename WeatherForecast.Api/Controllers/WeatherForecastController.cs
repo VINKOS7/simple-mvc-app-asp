@@ -16,9 +16,6 @@ public class WeatherForecastController : Controller
     public WeatherForecastController(IMediator mediator) => _mediator = mediator;
 
     //REST
-    [AllowAnonymous, HttpPost("add/from/excel")]
-    public async Task AddFromExcel([FromBody] AddWeatherForecastFromExelRequest request) => await _mediator.Send(request);
-
     [AllowAnonymous, HttpGet("fetch")]
     public async Task<FetchWeatherForecastsResponse> Fetch([FromQuery] int offset = 0, [FromQuery] int size = 20) => await _mediator.Send(new FetchWeatherForecastsRequest(offset, size));
 
@@ -35,6 +32,14 @@ public class WeatherForecastController : Controller
     public async Task Delete([FromQuery] Guid id) => await _mediator.Send(new DeleteWeatherForecastByIdRequest(id));
 
     //VIEW
+    [AllowAnonymous, HttpPost("add/from/excel")]
+    public async Task<IActionResult> AddFromExcel([FromForm] AddWeatherForecastFromExelRequest request) 
+    {
+        await _mediator.Send(request);
+
+        return RedirectToRoute(new { controller = "WeatherForecast", action = "FetchView" });
+    }
+
     [AllowAnonymous, HttpGet("fetch/view")]
     public async Task<IActionResult> FetchView([FromQuery] int offset = 0, [FromQuery] int size = 20) => View(await _mediator.Send(new FetchWeatherForecastsRequest(offset, size)));
 

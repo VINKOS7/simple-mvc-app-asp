@@ -59,8 +59,8 @@ public record ChangeWeatherForecastRequest(
 
 
 public record FetchWeatherForecastsRequest(
-    [JsonProperty("offset")] int Offset = 0,
-    [JsonProperty("size")] int Size = 20
+    [JsonProperty("offset")] int Offset,
+    [JsonProperty("size")] int Size
 ) 
 : IRequest<FetchWeatherForecastsResponse>;
 
