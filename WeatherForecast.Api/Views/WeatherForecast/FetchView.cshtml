@@ -8,8 +8,7 @@
 
 
 <div>
-    <div class="items">
-        <button onclick="addItems()">Ещё 20</button>
+    <div class="items">    
         @foreach (var wf in Model.WeatherForecasts)
         {
             <div class="item">
@@ -25,7 +24,7 @@
                 <h5 class="field">@wf.HorizontalVisibilityInKilometer</h5>
             </div>
         }
-       
+       <button onclick="addItems()">Ещё 20</button>
     </div>
 </div>
 
