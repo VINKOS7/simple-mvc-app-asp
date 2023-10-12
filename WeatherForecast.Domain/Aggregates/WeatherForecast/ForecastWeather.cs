@@ -87,7 +87,6 @@ public class ForecastWeather : Entity, IAggregateRoot
 
             for (int j = offset; j < sheet.LastRowNum; ++j)
             {
-                if (j is 67) j = 67;
                 forecastWeathers.AddLast(new ForecastWeather()
                 {
                     Id = Guid.NewGuid(),
