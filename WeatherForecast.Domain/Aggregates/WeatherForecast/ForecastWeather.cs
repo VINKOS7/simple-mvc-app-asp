@@ -79,10 +79,6 @@ public class ForecastWeather : Entity, IAggregateRoot
 
         for (int i = 0; i < command.WeatherForecasts.NumberOfSheets; ++i)
         {
-
-            var asd = getCell(67, 11, command.WeatherForecasts.GetSheetAt(0));
-
-
             var sheet = command.WeatherForecasts.GetSheetAt(i);
 
             for (int j = offset; j < sheet.LastRowNum; ++j)
