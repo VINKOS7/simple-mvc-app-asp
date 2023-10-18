@@ -40,17 +40,14 @@ public class ForecastWeather : Entity, IAggregateRoot
     {//Welcome to shit code))
         ICell bufferCell = null;
 
-        var getCell = (int i, int j, ISheet sheet) => bufferCell = sheet
+        ICell getCell(int i, int j, ISheet sheet) => bufferCell = sheet
             .GetRow(i)
             .GetCell(j);
 
-        var directionFromStringToEnum = (string value, int idx) =>
+        Direction directionFromStringToEnum(string value)
         {// it is bad code
-            var directions = value.Split(',');
 
-            if (idx >= 1 && directions.Length is 1) return Direction.Calm;
-
-            switch (directions[idx])
+            switch (value)
             {
                 case "Ю": return Direction.South;
                 case "С": return Direction.South;
@@ -64,7 +61,7 @@ public class ForecastWeather : Entity, IAggregateRoot
             }
         };
 
-        var getTimeInMinutes = (string value) =>
+        int getTimeInMinutes(string value)
         {
             var hoursAndMinutes = value.Split(":");
             var hours = hoursAndMinutes[0];
@@ -77,12 +74,15 @@ public class ForecastWeather : Entity, IAggregateRoot
 
         const int offset = 6;
 
+
         for (int i = 0; i < command.WeatherForecasts.NumberOfSheets; ++i)
         {
             var sheet = command.WeatherForecasts.GetSheetAt(i);
 
             for (int j = offset; j < sheet.LastRowNum; ++j)
             {
+                var directions = getCell(j, 6, sheet).StringCellValue.Split(',');
+
                 forecastWeathers.AddLast(new ForecastWeather()
                 {
                     Id = Guid.NewGuid(),
@@ -101,8 +101,8 @@ public class ForecastWeather : Entity, IAggregateRoot
 
                     Wind = Wind.From(new WindModel(
                         getCell(j, 7, sheet).CellType is CellType.String ? 0 : (int)bufferCell.NumericCellValue,
-                        directionFromStringToEnum(getCell(j, 6, sheet).StringCellValue, 0),
-                        directionFromStringToEnum(getCell(j, 6, sheet).StringCellValue, 1)
+                        directionFromStringToEnum(directions[0]),
+                        directions.Length <= 1 ? Direction.Calm : directionFromStringToEnum(directions[1])
                     )),
 
                     CloudinessInPercent = getCell(j, 8, sheet).CellType is CellType.String ? 0 : (int)bufferCell.NumericCellValue,
@@ -111,7 +111,7 @@ public class ForecastWeather : Entity, IAggregateRoot
 
                     HorizontalVisibilityInKilometer = getCell(j, 10, sheet).CellType is CellType.String ? 0 : (int)bufferCell.NumericCellValue,
 
-                    WeatherEvent = getCell(j, 11, sheet)  is not null? bufferCell.StringCellValue: " ",
+                    WeatherEvent = getCell(j, 11, sheet) is not null ? bufferCell.StringCellValue : " ",
                 });
 
                 forecastWeathers.ElementAt(i).DateWeatherEvent.AddMinutes(getTimeInMinutes(getCell(j, 1, sheet).StringCellValue));
