@@ -45,8 +45,7 @@ public class ForecastWeather : Entity, IAggregateRoot
             .GetCell(j);
 
         Direction directionFromStringToEnum(string value)
-        {// it is bad code
-
+        {
             switch (value)
             {
                 case "Ю": return Direction.South;
